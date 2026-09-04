@@ -13,15 +13,14 @@ endif()
 set( INCLUDE_DIRS
 src/reflect
 src/generic
-src
 )
 
 #
 # contents selected with patternfile ??-header--private-generated-headers
 #
 set( PRIVATE_GENERATED_HEADERS
-src/reflect/_MulleObjCOSFoundation-import-private.h
-src/reflect/_MulleObjCOSFoundation-include-private.h
+src/reflect/_MulleObjCLinuxFoundation-import-private.h
+src/reflect/_MulleObjCLinuxFoundation-include-private.h
 )
 
 #
@@ -36,10 +35,10 @@ src/generic/include-private.h
 # contents selected with patternfile ??-header--public-generated-headers
 #
 set( PUBLIC_GENERATED_HEADERS
-src/reflect/_MulleObjCOSFoundation-export.h
-src/reflect/_MulleObjCOSFoundation-import.h
-src/reflect/_MulleObjCOSFoundation-include.h
-src/reflect/_MulleObjCOSFoundation-provide.h
+src/reflect/_MulleObjCLinuxFoundation-export.h
+src/reflect/_MulleObjCLinuxFoundation-import.h
+src/reflect/_MulleObjCLinuxFoundation-include.h
+src/reflect/_MulleObjCLinuxFoundation-provide.h
 )
 
 #
@@ -48,13 +47,5 @@ src/reflect/_MulleObjCOSFoundation-provide.h
 set( PUBLIC_GENERIC_HEADERS
 src/generic/import.h
 src/generic/include.h
-)
-
-#
-# contents selected with patternfile ??-header--public-headers
-#
-set( PUBLIC_HEADERS
-src/MulleObjCDeps+MulleObjCOSFoundation.h
-src/MulleObjCOSFoundation.h
 )
 
