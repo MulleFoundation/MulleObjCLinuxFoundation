@@ -1,0 +1,36 @@
+{
+   "name" : "MulleObjCLinuxFoundation",
+   "version" : "0.29.0",
+   "description" : "This is a [mulle-sde](https://mulle-sde.github.io/) project.",
+   "keywords" : [],
+   "license" : "UNLICENSED",
+   "repo" : "MulleFoundation/MulleObjCLinuxFoundation",
+   "src" : [
+      "src/generic/import-private.h",
+      "src/generic/import.h",
+      "src/generic/include-private.h",
+      "src/generic/include.h",
+      "src/MulleObjCDeps+MulleObjCLinuxFoundation.m",
+      "src/NSBundle+Linux.m",
+      "src/NSCalendarDate+Linux.m",
+      "src/NSDateFormatter+Linux.m",
+      "src/NSFileManager+Linux.m",
+      "src/NSLocale+Linux.m",
+      "src/NSPathUtilities+Linux.m",
+      "src/NSProcessInfo+Linux.m",
+      "src/NSString+Linux.m",
+      "src/NSTask+Linux.m",
+      "src/NSTimeZone+Linux.m",
+      "src/reflect/objc-deps.inc",
+      "src/reflect/_MulleObjCLinuxFoundation-export.h",
+      "src/reflect/_MulleObjCLinuxFoundation-import-private.h",
+      "src/reflect/_MulleObjCLinuxFoundation-import.h",
+      "src/reflect/_MulleObjCLinuxFoundation-include-private.h",
+      "src/reflect/_MulleObjCLinuxFoundation-include.h",
+      "src/reflect/_MulleObjCLinuxFoundation-provide.h",
+      "src/_MulleGMTTimeZone+Linux.m"
+   ],
+   "dependencies" : {
+      "OS-Split/MulleObjCPosixFoundation": "*"
+   }
+}

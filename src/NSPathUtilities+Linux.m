@@ -41,6 +41,10 @@
 // other libraries of MulleObjCPosixFoundation
 #import <MulleObjCOSBaseFoundation/NSPathUtilities+OSBase-Private.h>
 
+// std-c and dependencies
+#include <pwd.h>
+#include <unistd.h>
+
 
 // just like FreeBSD not much thought invested
 
@@ -52,6 +56,25 @@ static NSString   *LinuxHomeDirectory( void)
    if( s)
       return( [NSString stringWithCString:s]);
    return( @"");  // compatible with bash
+}
+
+
+static NSString   *LinuxHomeDirectoryForUser( NSString *userName)
+{
+   struct passwd   *pw;
+   char            *s;
+   NSString        *home;
+
+   s = [userName UTF8String];
+   if( ! s)
+      return( nil);
+
+   pw = getpwnam( s);
+   if( ! pw)
+      return( nil);
+
+   home = [NSString stringWithUTF8String:pw->pw_dir];
+   return( home);
 }
 
 
@@ -75,13 +98,20 @@ static NSString   *LinuxTemporaryDirectory( void)
 
 static NSString   *LinuxUserName( void)
 {
-   char  *s;
+   struct passwd   *pw;
+   char            *s;
 
    s = getenv( "USER");
    if( ! s)
       s = getenv( "LOGNAME");
+   if( ! s)
+   {
+      pw = getpwuid( getuid());
+      if( pw)
+         s = pw->pw_name;
+   }
 
-   return( [NSString stringWithCString:s]);
+   return( [NSString stringWithCString:s ? s : "unknown"]);
 }
 
 
@@ -194,7 +224,7 @@ static _NSPathUtilityVectorTable   _LinuxTable =
 {
    LinuxUserName,
    LinuxHomeDirectory,
-   NULL,
+   LinuxHomeDirectoryForUser,
    LinuxSearchPathForDirectoriesInDomains,
    LinuxRootDirectory,
    LinuxTemporaryDirectory,

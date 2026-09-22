@@ -187,9 +187,15 @@ static void   unlazyArguments( NSProcessInfo *self)
 
 - (NSArray *) arguments
 {
+   NSArray   *value;
+
+   [_lock lock];
    if( ! _arguments)
       unlazyArguments( self);
-   return( _arguments);
+   value = [[_arguments retain] autorelease];
+   [_lock unlock];
+
+   return( value);
 }
 
 
@@ -205,9 +211,15 @@ static void   unlazyEnvironment( NSProcessInfo *self)
 
 - (NSDictionary *) environment
 {
+   NSDictionary   *value;
+
+   [_lock lock];
    if( ! _environment)
       unlazyEnvironment( self);
-   return( _environment);
+   value = [[_environment retain] autorelease];
+   [_lock unlock];
+
+   return( value);
 }
 
 
@@ -229,9 +241,15 @@ static void   unlazyExecutablePath( NSProcessInfo *self)
 
 - (NSString *) _executablePath
 {
+   NSString   *value;
+
+   [_lock lock];
    if( ! (id) _executablePath)
       unlazyExecutablePath( self);
-   return( _executablePath);
+   value = [[_executablePath retain] autorelease];
+   [_lock unlock];
+
+   return( value);
 }
 
 
