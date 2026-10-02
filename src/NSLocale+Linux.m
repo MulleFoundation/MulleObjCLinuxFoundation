@@ -44,6 +44,82 @@
 // std-c and dependencies
 #include <locale.h>
 #include <langinfo.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+// The locale the environment asks for: LC_ALL beats LC_CTYPE beats LANG.
+// An empty value is not a locale, it means "unset".
+//
+// Whether the name can actually be instantiated is decided by
+// -initWithLocaleIdentifier:, which is the one place that spends a
+// newlocale() on it. Validating the name here with a second newlocale() just
+// duplicated that work and threw the result away - and it was not even
+// equivalent, because it only asked for LC_CTYPE while the constructor asks
+// for every category. A name the OS has no data for now keeps being the
+// identifier (exactly like an explicit -initWithLocaleIdentifier: does) and
+// only its *values* fall back to "C".
+static NSString   *mulle_locale_environment_identifier( void)
+{
+   char   *s;
+
+   s = getenv( "LC_ALL");
+   if( ! s || ! *s)
+      s = getenv( "LC_CTYPE");
+   if( ! s || ! *s)
+      s = getenv( "LANG");
+   if( ! s || ! *s)
+      return( @"C");
+
+   return( [NSString stringWithCString:s]);
+}
+
+
+// maps the (POSIX) CONV_ codes onto their nl_langinfo counterpart
+static int   mulle_locale_conv_nl_item( int code)
+{
+   switch( code)
+   {
+   case CONV_DECIMAL_POINT       : return( RADIXCHAR);
+   case CONV_THOUSANDS_SEPERATOR : return( THOUSEP);
+   case CONV_CURRENCY_SYMBOL     : return( CRNCYSTR);
+   case CONV_INT_CURRENCY_SYMBOL : return( INT_CURR_SYMBOL);
+   }
+   return( -1);
+}
+
+
+static NSString   *mulle_locale_conv_info( int code, locale_t xlocale)
+{
+   char     buf[ 64];
+   char     *s;
+   size_t   len;
+   int      item;
+
+   item = mulle_locale_conv_nl_item( code);
+   if( item == -1)
+      return( nil);
+
+   s = nl_langinfo_l( item, xlocale);
+   if( ! s)
+      return( nil);
+
+   // CRNCYSTR is prefixed by a sign character that is not part of the symbol
+   if( code == CONV_CURRENCY_SYMBOL && (s[ 0] == '-' || s[ 0] == '+'))
+      ++s;
+
+   // INT_CURR_SYMBOL is padded with a blank
+   len = strlen( s);
+   while( len && (s[ len - 1] == ' ' || s[ len - 1] == '\t'))
+      --len;
+
+   if( len >= sizeof( buf))
+      return( [NSString stringWithCString:s]);
+
+   memcpy( buf, s, len);
+   buf[ len] = 0;
+   return( [NSString stringWithCString:buf]);
+}
 
 
 @implementation NSLocale (Linux)
@@ -59,15 +135,13 @@
 
 + (instancetype) _systemLocale
 {
-   // bullshit
-   return( [[[NSLocale alloc] initWithLocaleIdentifier:@"C"] autorelease]);
+   return( [[[NSLocale alloc] initWithLocaleIdentifier:mulle_locale_environment_identifier()] autorelease]);
 }
 
 
 + (instancetype) _currentLocale
 {
-   // bullshit
-   return( [[[NSLocale alloc] initWithLocaleIdentifier:@"C"] autorelease]);
+   return( [[[NSLocale alloc] initWithLocaleIdentifier:mulle_locale_environment_identifier()] autorelease]);
 }
 
 
@@ -83,6 +157,9 @@
    {
    case IDENTIFIER_INFO :
       return( _identifier);
+
+   case CONV_INFO :
+      return( mulle_locale_conv_info( info.code, _xlocale));
 
    case LANG_INFO  :
       s = nl_langinfo_l( info.code, _xlocale);

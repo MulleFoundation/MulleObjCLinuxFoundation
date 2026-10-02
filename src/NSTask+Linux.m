@@ -46,12 +46,11 @@
 
 @dependency NSTask( Posix);
 
-
-+ (char **) _environment
-{
-   extern char  **environ;
-
-   return( environ);
-}
+//
+// process control is implemented generically in NSTask( Posix). The child's
+// environment is one of the things a launch is now told (options.env of
+// mulle-spawn), so the `+_environment` that handed this platform's `environ`
+// to the old fork/execve is gone rather than moved.
+//
 
 @end

@@ -39,6 +39,7 @@
 // other files in this library
 
 // other libraries of MulleObjCPosixFoundation
+#import <MulleObjCPosixFoundation/NSLocale+Posix-Private.h>
 
 // std-c and dependencies
 
@@ -47,8 +48,6 @@
 
 @dependency NSString( OSBase);
 
-
-// should probably query system locale or something
 
 - (NSString *) _stringByRemovingPrivatePrefix
 {
@@ -70,13 +69,13 @@
 
 - (NSStringEncoding) _cStringEncoding
 {
-   return( NSUTF8StringEncoding);
+   return( mulle_posix_cstring_encoding());
 }
 
 
 + (NSStringEncoding) defaultCStringEncoding
 {
-   return( NSUTF8StringEncoding);
+   return( mulle_posix_cstring_encoding());
 }
 
 @end
